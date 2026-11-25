@@ -1,0 +1,24 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: "false"
+      HOST: "0.0.0.0"
+      PORT: "8000"
+      DATABASE_URL: "sqlite+aiosqlite:////data/app.db"
+      # Ví dụ giới hạn origin khi deploy thật:
+      # CORS_ORIGINS: '["https://your-frontend.example.com"]'
+    volumes:
+      - app-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  app-data:
